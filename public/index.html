@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Music Xuân Công - Phát Nhạc & Playlist Cá Nhân</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header & Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-compact-disc fa-spin-pulse"></i>
+        </div>
+        <div>
+          <h1>Music Xuân Công</h1>
+          <p class="tagline">Nghe nhạc chỉ âm thanh • Tìm theo lời • Lưu trữ cá nhân</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <div class="badge" id="badge-total" title="Tổng số bài trong kho">
+          <i class="fa-solid fa-music"></i> <span id="stat-total">0</span> bài
+        </div>
+        <div class="badge badge-offline" id="badge-offline" title="Số bài đã lưu về máy">
+          <i class="fa-solid fa-cloud-arrow-down"></i> <span id="stat-offline">0</span> offline
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="main-container">
+    <!-- Search & Confirm Hero Section -->
+    <section class="search-section">
+      <div class="search-box-card">
+        <h2><i class="fa-solid fa-wand-magic-sparkles text-gradient"></i> Tìm bài hát bạn đang nhớ mang máng</h2>
+        <p class="search-desc">Nhập tên bài, tên ca sĩ, hoặc <strong>chỉ cần một câu trong lời bài hát</strong> (ví dụ: <em>"dù cho mai về sau", "ngày em quay bước đi"...</em>)</p>
+        
+        <form id="search-form" class="search-form">
+          <div class="input-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-input" placeholder="Nhập tên bài hoặc lời bài hát bạn nhớ..." autocomplete="off" required>
+            <button type="button" id="clear-search-btn" class="clear-btn" title="Xóa"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <button type="submit" class="btn btn-primary" id="search-submit-btn">
+            <i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm
+          </button>
+        </form>
+
+        <!-- Quick Tag Suggestions -->
+        <div class="quick-tags">
+          <span class="quick-title"><i class="fa-regular fa-lightbulb"></i> Gợi ý:</span>
+          <button class="tag-btn" data-query="dù cho mai về sau mình không bên cạnh nhau">"dù cho mai về sau"</button>
+          <button class="tag-btn" data-query="em ơi em ở lại">"em ơi em ở lại"</button>
+          <button class="tag-btn" data-query="nơi này có anh">"nơi này có anh"</button>
+          <button class="tag-btn" data-query="ngày đầu tiên em đi cùng anh">"ngày đầu tiên"</button>
+          <button class="tag-btn" data-query="chạy ngay đi trước khi">"chạy ngay đi"</button>
+        </div>
+      </div>
+
+      <!-- Search Results Area -->
+      <div id="search-results-container" class="search-results-container hidden">
+        <div class="results-header">
+          <div>
+            <h3>
+              <i class="fa-solid fa-list-check text-gradient"></i> Kết quả tìm kiếm 
+              <span class="query-keyword" id="result-query-text"></span>
+            </h3>
+            <p class="results-subtext">👉 Bấm <strong>"Nghe thử"</strong> để kiểm tra xem đúng bài không, sau đó bấm <strong>"Thêm vào Playlist"</strong> để lưu lại.</p>
+          </div>
+          <span class="results-count-badge" id="results-count-badge">0 kết quả</span>
+        </div>
+        
+        <!-- Search Results Grid (Show 8 items initially, full 16 items on expand) -->
+        <div id="search-results-list" class="results-grid"></div>
+
+        <!-- Load More Button -->
+        <div id="load-more-container" class="load-more-container hidden">
+          <button id="btn-load-more" class="btn btn-secondary">
+            <i class="fa-solid fa-angles-down"></i> Xem thêm 8 bài tiếp theo (<span id="load-more-remaining">8</span> bài nữa)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Playlist Section -->
+    <section class="playlist-section">
+      <div class="playlist-header">
+        <div class="playlist-title-area">
+          <h2><i class="fa-solid fa-headphones text-gradient"></i> Playlist của tôi</h2>
+          <span class="playlist-count-pill" id="playlist-count">0 bài hát</span>
+        </div>
+        
+        <!-- Quick Playback Mode Selector in Playlist Header -->
+        <div class="playback-mode-picker">
+          <span class="mode-label"><i class="fa-solid fa-sliders"></i> Chế độ phát:</span>
+          <select id="select-play-mode" class="mode-select" title="Chọn chế độ khi nghe hết 1 bài">
+            <option value="sequential">Phát liên tiếp (Tuần tự)</option>
+            <option value="shuffle">Nhảy loạn xạ (Ngẫu nhiên)</option>
+            <option value="repeat_one">Lặp lại 1 bài (Loop)</option>
+            <option value="stop_at_end">Dừng khi hết bài (Stop)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Playlist Filter & Search Toolbar (Cho khi danh sách nhiều bài) -->
+      <div class="playlist-toolbar">
+        <div class="playlist-search-wrapper">
+          <i class="fa-solid fa-filter"></i>
+          <input type="text" id="playlist-filter-input" placeholder="Lọc nhanh bài trong playlist theo tên, ca sĩ..." autocomplete="off">
+          <button type="button" id="clear-filter-btn" class="clear-filter-btn" title="Xóa lọc"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="toolbar-actions">
+          <div class="filter-tabs">
+            <button class="filter-btn active" data-filter="all">Tất cả</button>
+            <button class="filter-btn" data-filter="downloaded"><i class="fa-solid fa-download"></i> Đã tải offline</button>
+          </div>
+
+          <div class="sort-wrapper">
+            <select id="playlist-sort-select" class="sort-select">
+              <option value="newest">Mới thêm gần đây</option>
+              <option value="oldest">Thêm đầu tiên</option>
+              <option value="title_asc">Tên bài hát (A → Z)</option>
+              <option value="artist_asc">Tên ca sĩ (A → Z)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="empty-playlist" class="empty-state hidden">
+        <div class="empty-icon"><i class="fa-solid fa-compact-disc"></i></div>
+        <h3>Playlist chưa có bài hát nào phù hợp</h3>
+        <p id="empty-playlist-desc">Hãy gõ một câu bạn nhớ vào ô tìm kiếm ở trên để nghe thử và thêm bài vào danh sách nhé!</p>
+      </div>
+
+      <!-- Song List Table (Desktop) / Cards (Mobile) -->
+      <div class="playlist-table-container">
+        <table class="playlist-table">
+          <thead>
+            <tr>
+              <th width="50" class="col-idx">#</th>
+              <th>Bài hát</th>
+              <th width="120" class="col-duration">Thời lượng</th>
+              <th width="140" class="col-source">Nguồn</th>
+              <th width="140" class="text-right col-actions">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="playlist-tbody">
+            <!-- Dynamic Song Rows -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Docked Audio Player (Fixed Bottom) -->
+  <footer class="docked-player" id="docked-player">
+    <!-- Progress bar on top for mobile and desktop -->
+    <div class="player-top-progress" id="progress-wrapper">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+      <div class="progress-thumb" id="progress-thumb"></div>
+    </div>
+
+    <div class="player-container">
+      <!-- Left: Song Info & Vinyl Art -->
+      <div class="player-left">
+        <div class="vinyl-wrapper" id="player-vinyl">
+          <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=120&auto=format&fit=crop" id="player-thumb" alt="Thumbnail">
+          <div class="vinyl-hole"></div>
+        </div>
+        <div class="song-meta">
+          <div class="song-title-marquee" id="player-title">Chưa chọn bài hát nào</div>
+          <div class="song-artist" id="player-artist">Chọn một bài từ playlist hoặc tìm kiếm để nghe</div>
+          <div class="source-badge" id="player-source-badge">
+            <span class="badge-dot"></span> <span id="player-source-text">Sẵn sàng</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Controls & Progress Display -->
+      <div class="player-center">
+        <div class="controls-row">
+          <button class="ctrl-btn" id="ctrl-mode-quick" title="Bấm để đổi chế độ phát (Tuần tự / Nhảy loạn xạ / Lặp 1 bài / Dừng)">
+            <i class="fa-solid fa-arrows-split-up-and-left" id="ctrl-mode-icon"></i>
+          </button>
+          <button class="ctrl-btn" id="ctrl-prev" title="Bài trước (Mũi tên trái)"><i class="fa-solid fa-backward-step"></i></button>
+          <button class="ctrl-btn play-btn" id="ctrl-play" title="Phát / Tạm dừng (Phím Space)"><i class="fa-solid fa-play"></i></button>
+          <button class="ctrl-btn" id="ctrl-next" title="Bài tiếp (Mũi tên phải)"><i class="fa-solid fa-forward-step"></i></button>
+          <button class="ctrl-btn" id="ctrl-repeat-quick" title="Lặp lại bài này"><i class="fa-solid fa-repeat"></i></button>
+        </div>
+
+        <div class="progress-time-row">
+          <span class="time-label" id="current-time">0:00</span>
+          <span class="mode-status-pill" id="player-mode-pill">Chế độ: Phát liên tiếp</span>
+          <span class="time-label" id="total-time">0:00</span>
+        </div>
+      </div>
+
+      <!-- Right: Volume & Extra Actions -->
+      <div class="player-right">
+        <div class="volume-container">
+          <button class="volume-btn" id="ctrl-volume-btn" title="Bật/Tắt âm"><i class="fa-solid fa-volume-high"></i></button>
+          <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80">
+        </div>
+        <button class="action-btn" id="download-current-btn" title="Tải bài đang phát về máy">
+          <i class="fa-solid fa-download"></i>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Pure HTML5 Native Audio Engine -->
+  <audio id="main-audio" preload="auto"></audio>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>

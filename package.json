@@ -1,0 +1,17 @@
+{
+  "name": "music-xuan-cong",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "node setup.js"
+  },
+  "keywords": ["music", "player", "playlist"],
+  "author": "Xuan Cong",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "yt-search": "^2.13.1"
+  }
+}
